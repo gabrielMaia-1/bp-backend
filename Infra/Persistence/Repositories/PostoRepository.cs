@@ -21,13 +21,14 @@ namespace Infra.Persistence.Repositories
         {
             //Aproxima consulta com area quadrada (Otimização)
             var aproxdist = (from p in _context.Postos
-                            where Math.Abs(p.Latitude - lat) < range && Math.Abs(p.Longitude - lng) < range
-                            select p).AsEnumerable()
+                             join c in _context.Combustivel on p.Id equals c.Posto.Id
+                             where Math.Abs(p.Latitude - lat) < range && Math.Abs(p.Longitude - lng) < range
+                             select p).AsEnumerable()
                             ;
 
 
-            //Filtra resulta usando area redonda
-            return aproxdist.ToList().Where(p => DistancePow2(p.Latitude, p.Longitude) < (range * range));
+            //Filtra resultado usando area redonda ordenando por preco
+            return aproxdist.ToList().Where(p => DistancePow2(p.Latitude - lat, p.Longitude - lng) < (range * range));
         }
 
         /**

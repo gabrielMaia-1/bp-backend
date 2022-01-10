@@ -23,9 +23,47 @@ namespace Api.Controllers
         }
 
         [HttpGet("posto/proximo")]
-        public IActionResult GetPostosInRange([FromQuery]double lat, [FromQuery] double lng, double range)
+        public IActionResult GetPostosInRange([FromQuery]double lat, [FromQuery] double lng, [FromQuery] double range)
         {
-            return Ok(_uow.Posto.GetPostosInRange(lat, lng, range));
+            var posto = _uow.Posto.GetPostosInRange(lat, lng, range);
+            var comb = _uow.Combustivel.GetAll();
+
+            var group = from p in posto
+                        join c in comb on p.Id equals c.Posto.Id into combustiveis
+                        select new { Posto = p, Combustivel = combustiveis.ToList() };
+
+            var list = new List<PostoDto>();
+
+            foreach (var g in group)
+            {
+                var combustivelList = new List<CombustivelDto>();
+
+                foreach(var c in g.Combustivel)
+                {
+                    combustivelList.Add(new CombustivelDto()
+                    {
+                        Id = c.Id,
+                        Preco = c.PrecoLitro,
+                        Tipo = new TipoCombustivelDto()
+                            {
+                                Id = c.TipoCombustivel.Id,
+                                Nome = c.TipoCombustivel.Nome,
+                                Aditivado = c.TipoCombustivel.Aditivado
+                            }
+                    });
+                }
+
+                list.Add(new PostoDto()
+                {
+                    Id = g.Posto.Id,
+                    Nome = g.Posto.Nome,
+                    Latitude = g.Posto.Latitude,
+                    Longitude = g.Posto.Longitude,
+                    Combustivel = combustivelList
+                });
+            }
+
+            return Ok(list);
         }
 
         [HttpGet]
