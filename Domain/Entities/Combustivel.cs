@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,14 @@ namespace Domain.Entities
 {
     public class Combustivel
     {
-        public ulong Id { get; set; }
+        [Required]
+        public int Id { get; set; }
+        [Required]
         public Posto Posto { get; set; }
+        [Required]
         public TipoCombustivel TipoCombustivel { get; set; }
+        [Required]
+        [Range(0.0,9999.0)]
         public decimal PrecoLitro { get; set; }
     }
 }

@@ -14,11 +14,15 @@ namespace Infra.Persistence
     {
         private readonly EntityContext _context;
         public IPostoRepository Posto { get; private set; }
+        public ICombustivelRepository Combustivel { get; private set; }
+        public ITipoCombustivelRepository TipoCombustivel { get; private set; }
 
         public UnitOfWork(EntityContext context)
         {
             _context = context;
             Posto = new PostoRepository(_context);
+            Combustivel = new CombustivelRepository(_context);
+            TipoCombustivel = new TipoCombustivelRepository(_context);
         }
 
         public int Complete()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Api.Exceptions;
 using Api.Models;
 using Application.Common.Interfaces;
 using Domain.Entities;
@@ -14,72 +15,72 @@ namespace Api.Controllers
     [ApiController]
     public class PostoController : ControllerBase
     {
-        private readonly IUnitOfWork _uof;
+        private readonly IUnitOfWork _uow;
 
         public PostoController(IUnitOfWork uow)
         {
-            _uof = uow;
+            _uow = uow;
         }
 
         [HttpGet("posto/proximo")]
         public IActionResult GetPostosInRange([FromQuery]double lat, [FromQuery] double lng, double range)
         {
-            return Ok(_uof.Posto.GetPostosInRange(lat, lng, range));
+            return Ok(_uow.Posto.GetPostosInRange(lat, lng, range));
         }
 
         [HttpGet]
         public IActionResult GetAllPostos()
         {
-            return Ok(_uof.Posto.GetAll());
+            return Ok(_uow.Posto.GetAll());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetPosto(int id)
         {
-            return Ok(_uof.Posto.Get(id));
+            return Ok(_uow.Posto.Get(id));
         }
 
         [HttpPost]
-        public IActionResult PostPosto([FromBody] PostoDto posto)
+        public IActionResult PostPosto([FromBody] PostoDto dto)
         {
-            var p = _uof.Posto.Add(new Posto()
+            var p = _uow.Posto.Add(new Posto()
             {
-                Latitude = posto.Latitude,
-                Longitude = posto.Longitude,
-                Nome = posto.Nome
+                Latitude = dto.Latitude,
+                Longitude = dto.Longitude,
+                Nome = dto.Nome
             });
 
-            _uof.Complete();
+            _uow.Complete();
 
             return Ok(p);
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutPosto([FromRoute] int id, [FromBody] PostoDto posto)
+        public IActionResult PutPosto([FromRoute] int id, [FromBody] PostoDto dto)
         {
-            var p = _uof.Posto.Get(id);
+            var p = _uow.Posto.Get(id);
 
-            if (p is null) throw new Exception("A Entidade que voce esta tentando atualizar não existe.");
+            if (p is null) throw new ApiException("A Entidade que voce esta tentando atualizar não existe.");
 
-            p.Latitude = posto.Latitude;
-            p.Longitude = posto.Longitude;
-            p.Nome = posto.Nome;
+            p.Latitude = dto.Latitude;
+            p.Longitude = dto.Longitude;
+            p.Nome = dto.Nome;
 
-            _uof.Complete();
+            _uow.Complete();
 
-            return Ok(posto);
+            return Ok(dto);
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeletePosto([FromRoute] int id)
         {
-            var p = _uof.Posto.Get(id);
+            var p = _uow.Posto.Get(id);
 
-            if (p is null) throw new Exception("A Entidade que voce esta tentando excluir não existe.");
+            if (p is null) throw new ApiException("A Entidade que voce esta tentando excluir não existe.");
 
-            _uof.Posto.Remove(p);
+            _uow.Posto.Remove(p);
 
-            _uof.Complete();
+            _uow.Complete();
 
             return Ok(new PostoDto { Id = p.Id, Nome = p.Nome, Latitude = p.Latitude, Longitude = p.Longitude});
         }

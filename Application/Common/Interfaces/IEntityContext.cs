@@ -11,5 +11,7 @@ namespace Application.Common.Interfaces
     public interface IEntityContext
     {
         DbSet<Posto> Postos { get; }
+        DbSet<Combustivel> Combustivel { get; set; }
+        DbSet<TipoCombustivel> TipoCombustivel { get; set; }
     }
 }

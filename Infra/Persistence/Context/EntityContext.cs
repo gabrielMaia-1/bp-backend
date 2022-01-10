@@ -13,6 +13,8 @@ namespace Infra.Persistence.Context
     internal class EntityContext : DbContext, IEntityContext
     {
         public DbSet<Posto> Postos { get; set; }
+        public DbSet<Combustivel> Combustivel { get; set; }
+        public DbSet<TipoCombustivel> TipoCombustivel { get; set; }
 
         public EntityContext(DbContextOptions options) : base(options)
         {

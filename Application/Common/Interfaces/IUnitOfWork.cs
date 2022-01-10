@@ -10,6 +10,8 @@ namespace Application.Common.Interfaces
     public interface IUnitOfWork
     {
         IPostoRepository Posto { get; }
+        ICombustivelRepository Combustivel { get; }
+        ITipoCombustivelRepository TipoCombustivel { get; }
         int Complete();
     }
 }

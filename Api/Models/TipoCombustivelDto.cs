@@ -5,17 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Api.Models
 {
-    public class TipoCombustivel
+    public class TipoCombustivelDto
     {
-        [Key]
-        [Required]
-        public int Id { get; set; }
-        [MaxLength(96)]
-        [Required]
+        public int? Id { get; set; }
+        [Required(AllowEmptyStrings =false, ErrorMessage = "nome é obrigatório")]
         public string Nome { get; set; }
-        [Required]
+        [Required(ErrorMessage = "aditivado é obrigatório")]
         public bool Aditivado { get; set; }
     }
 }

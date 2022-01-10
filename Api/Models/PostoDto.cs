@@ -18,5 +18,6 @@ namespace Api.Models
         public double Latitude { get; set; }
         [Required(ErrorMessage = "Longitude é obrigatório.")]
         public double Longitude { get; set; }
+        public List<CombustivelDto> Combustivel { get; set; }
     }
 }
